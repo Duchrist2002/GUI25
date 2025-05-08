@@ -132,7 +132,7 @@ class SignInPage(QWidget):
         layout.addWidget(title)
 
         username = QLineEdit()
-        username.setPlaceholderText("Choose a username")!
+        username.setPlaceholderText("Choose a username")
         password = QLineEdit()
         password.setPlaceholderText("Choose a password")
         password.setEchoMode(QLineEdit.Password)

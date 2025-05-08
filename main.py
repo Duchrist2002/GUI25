@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit, QPushButton,
                              QVBoxLayout, QHBoxLayout, QSizePolicy, QSpacerItem,
-                             QGraphicsBlurEffect, QStackedLayout, QStackedWidget, QFrame)
+                             QGraphicsBlurEffect, QScrollArea, QStackedLayout, QStackedWidget, QFrame)
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 import sys
@@ -25,21 +25,7 @@ class LoginPage(QWidget):
         blur_effect.setBlurRadius(2)
         image_label.setGraphicsEffect(blur_effect)
 
-        welcome_label = QLabel("Welcome back, traveler 🌍")
-        welcome_label.setAlignment(Qt.AlignCenter)
-        welcome_label.setStyleSheet("""
-            QLabel {
-                color: white;
-                font-size: 32px;
-                font-weight: bold;
-                background-color: rgba(0, 0, 0, 0.4); 
-                padding: 20px;
-                border-radius: 10px;
-            }
-        """)
-
         stack_layout.addWidget(image_label)
-        stack_layout.addWidget(welcome_label)
         main_layout.addWidget(image_container, 3)
 
         # === Formulaire Login ===
@@ -123,54 +109,120 @@ class LoginPage(QWidget):
 class SignInPage(QWidget):
     def __init__(self, switch_to_login):
         super().__init__()
-        layout = QVBoxLayout()
-        layout.setContentsMargins(100, 100, 100, 100)
 
-        title = QLabel("Sign up for Seavia")
+        main_layout = QHBoxLayout()
+
+        # === Image + effet flou ===
+        image_container = QFrame()
+        stack_layout = QStackedLayout(image_container)
+
+        image_label = QLabel()
+        pixmap = QPixmap("Valencia.jpg")
+        image_label.setPixmap(pixmap)
+        image_label.setScaledContents(True)
+        image_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        blur_effect = QGraphicsBlurEffect()
+        blur_effect.setBlurRadius(2)
+        image_label.setGraphicsEffect(blur_effect)
+
+        stack_layout.addWidget(image_label)
+        main_layout.addWidget(image_container, 3)
+
+        # === Formulaire Sign-up ===
+        form_layout = QVBoxLayout()
+        form_layout.setSpacing(20)
+        form_layout.setContentsMargins(40, 40, 40, 40)
+        form_layout.addSpacerItem(QSpacerItem(20, 40))
+
+        title = QLabel("Create your Seavia account")
         title.setAlignment(Qt.AlignCenter)
-        title.setStyleSheet("font-size: 26px; font-weight: bold; color: #007ACC;")
-        layout.addWidget(title)
+        title.setStyleSheet("""
+            QLabel {
+                background-color: #007ACC;
+                border-radius: 10px;
+                padding: 15px;
+                color: white;
+                font-weight: bold;
+                font-size: 24px;
+            }
+        """)
+        form_layout.addWidget(title)
 
-        username = QLineEdit()
-        username.setPlaceholderText("Choose a username")!
-        password = QLineEdit()
-        password.setPlaceholderText("Choose a password")
-        password.setEchoMode(QLineEdit.Password)
-        confirm = QLineEdit()
-        confirm.setPlaceholderText("Confirm password")
-        confirm.setEchoMode(QLineEdit.Password)
+        def create_input(placeholder, password=False):
+            line = QLineEdit()
+            line.setPlaceholderText(placeholder)
+            if password:
+                line.setEchoMode(QLineEdit.Password)
+            line.setMinimumHeight(40)
+            line.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            line.setStyleSheet("""
+                QLineEdit {
+                    border: 2px solid #007ACC;
+                    border-radius: 10px;
+                    padding: 10px;
+                    background-color: #f9f9f9;
+                    font-size: 14px;
+                }
+                QLineEdit:focus {
+                    border-color: #005999;
+                    background-color: #ffffff;
+                }
+            """)
+            return line
 
-        for widget in (username, password, confirm):
-            widget.setMinimumHeight(40)
-            widget.setStyleSheet("padding: 10px; font-size: 14px; border: 2px solid #007ACC; border-radius: 8px;")
+        username = create_input("Choose a username")
+        email = create_input("enter your email")
+        password = create_input("Choose a password", password=True)
+        confirm = create_input("Confirm password", password=True)
 
-        layout.addWidget(username)
-        layout.addWidget(password)
-        layout.addWidget(confirm)
+
+        form_layout.addWidget(username)
+        form_layout.addWidget(email)
+        form_layout.addWidget(password)
+        form_layout.addWidget(confirm)
 
         create_button = QPushButton("Create Account")
+        create_button.setMinimumHeight(40)
         create_button.setStyleSheet("""
             QPushButton {
-                background-color: #2ecc71;
+                background-color: #e74c3c;
                 color: white;
-                font-size: 16px;
                 font-weight: bold;
+                font-size: 16px;
                 border: none;
                 border-radius: 10px;
                 padding: 10px;
             }
             QPushButton:hover {
-                background-color: #27ae60;
+                background-color: #c0392b;
             }
         """)
-        layout.addWidget(create_button)
+        form_layout.addWidget(create_button)
 
         back_btn = QPushButton("Back to Login")
         back_btn.setStyleSheet("QPushButton { color: #007ACC; background: transparent; border: none; }")
         back_btn.clicked.connect(switch_to_login)
-        layout.addWidget(back_btn, alignment=Qt.AlignRight)
+        form_layout.addWidget(back_btn, alignment=Qt.AlignRight)
 
-        self.setLayout(layout)
+        form_widget = QWidget()
+        form_widget.setLayout(form_layout)
+        form_widget.setStyleSheet("background-color: white;")
+        form_widget.setMaximumWidth(1000)
+
+        main_layout.addWidget(form_widget)
+        self.setLayout(main_layout)
+
+
+
+class MainPage(QWidget):
+    def __init__(self):
+        super().__init__()
+
+
+        MainLayout = QHBoxLayout
+
+        ContentContainer = QScrollarea
 
 class MainWindow(QWidget):
     def __init__(self):

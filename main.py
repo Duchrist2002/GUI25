@@ -213,17 +213,6 @@ class SignInPage(QWidget):
         main_layout.addWidget(form_widget)
         self.setLayout(main_layout)
 
-
-
-class MainPage(QWidget):
-    def __init__(self):
-        super().__init__()
-
-
-        MainLayout = QHBoxLayout
-
-        ContentContainer = QScrollarea
-
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()

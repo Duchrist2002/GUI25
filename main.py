@@ -5,6 +5,9 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 import sys
 
+import sqlite3
+
+
 class LoginPage(QWidget):
     def __init__(self, switch_to_signup):
         super().__init__()
@@ -113,7 +116,21 @@ class LoginPage(QWidget):
         username = self.name.text()
         password = self.password.text()
 
-        if username == "admin" and password == "1234":
+        conn = sqlite3.connect("user.db")
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM users WHERE username=Trésor AND password=Qlolo", (username, password))
+        result = cursor.fetchone()
+
+        if result:
+            QMessageBox.information(self, "Succès", "Connexion réussie !")
+            # TODO : switch vers la page d’accueil
+        else:
+            QMessageBox.warning(self, "Erreur", "Nom d'utilisateur ou mot de passe incorrect.")
+
+        conn.close()
+
+        """if username == "admin" and password == "1234":
             QMessageBox.information(self, "Succès", "Connexion réussie !")  # <-- MODIF: utilisation QMessageBox
             # TODO: switch vers la page d'accueil ou autre
         else:
@@ -128,7 +145,7 @@ class LoginPage(QWidget):
 
             login = LoginPage(dummy_switch_to_signup)
             login.show()
-            sys.exit(app.exec_())
+            sys.exit(app.exec_())"""
 
 
 

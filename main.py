@@ -120,6 +120,49 @@ class LoginPage(QWidget):
         main_layout.addWidget(form)
         self.setLayout(main_layout)
 
+<<<<<<< Updated upstream
+=======
+         # Connexion du bouton login à la méthode handle_login
+        self.login_button.clicked.connect(self.handle_login)
+
+    def handle_login(self):  # <-- Valuers_User + comparaison + conclusion
+        username = self.name.text()
+        password = self.password.text()
+
+        conn = sqlite3.connect("user.db")
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM users WHERE username=Trésor AND password=Qlolo", (username, password))
+        result = cursor.fetchone()
+
+        if result:
+            QMessageBox.information(self, "Succès", "Connexion réussie !")
+            # TODO : switch vers la page d’accueil
+        else:
+            QMessageBox.warning(self, "Erreur", "Nom d'utilisateur ou mot de passe incorrect.")
+
+        conn.close()
+
+        """if username == "admin" and password == "1234":
+            QMessageBox.information(self, "Succès", "Connexion réussie !")  # <-- MODIF: utilisation QMessageBox
+            # TODO: switch vers la page d'accueil ou autre
+        else:
+            QMessageBox.warning(self, "Erreur", "Nom d'utilisateur ou mot de passe incorrect.")  # <-- MODIF: QMessageBox erreur
+
+        # Code pour tester la fenêtre"""
+        if __name__ == "__main__":
+            app = QApplication(sys.argv)
+            
+            def dummy_switch_to_signup():
+                print("Switch to signup called")
+
+            login = LoginPage(dummy_switch_to_signup)
+            login.show()
+            sys.exit(app.exec_())
+
+
+
+>>>>>>> Stashed changes
 class SignInPage(QWidget):
     def __init__(self, switch_to_login):
         super().__init__()

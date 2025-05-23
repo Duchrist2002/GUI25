@@ -149,8 +149,11 @@ class LoginPage(QWidget):
 class SignInPage(QWidget):
     def __init__(self, switch_to_login):
         super().__init__()
-        layout = QVBoxLayout()
-        layout.setContentsMargins(100, 100, 100, 100)
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(100, 100, 100, 100)
+
+        form_layout = QVBoxLayout()
+
 
         title = QLabel("Sign up for Seavia")
         title.setAlignment(Qt.AlignCenter)
@@ -190,6 +193,10 @@ class SignInPage(QWidget):
 
         username = QLineEdit()
         username.setPlaceholderText("Choose a username")
+
+        email = QLineEdit()  # 🔧 LIGNE AJOUTÉE
+        email.setPlaceholderText("Enter your email")  # 🔧 LIGNE AJOUTÉE
+
         password = QLineEdit()
         password.setPlaceholderText("Choose a password")
         password.setEchoMode(QLineEdit.Password)

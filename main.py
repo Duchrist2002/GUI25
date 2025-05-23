@@ -242,7 +242,6 @@ class SignInPage(QWidget):
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        init_db()
         self.setWindowTitle("Seavia Holiday")
         self.setMinimumSize(800, 600)
 

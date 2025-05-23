@@ -113,13 +113,27 @@ class LoginPage(QWidget):
         username = self.name.text()
         password = self.password.text()
 
-        if username == "admin" and password == "1234":
+        conn = sqlite3.connect("user.db")
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM users WHERE username=Trésor AND password=Qlolo", (username, password))
+        result = cursor.fetchone()
+
+        if result:
+            QMessageBox.information(self, "Succès", "Connexion réussie !")
+            # TODO : switch vers la page d’accueil
+        else:
+            QMessageBox.warning(self, "Erreur", "Nom d'utilisateur ou mot de passe incorrect.")
+
+        conn.close()
+
+        """if username == "admin" and password == "1234":
             QMessageBox.information(self, "Succès", "Connexion réussie !")  # <-- MODIF: utilisation QMessageBox
             # TODO: switch vers la page d'accueil ou autre
         else:
             QMessageBox.warning(self, "Erreur", "Nom d'utilisateur ou mot de passe incorrect.")  # <-- MODIF: QMessageBox erreur
 
-        # Code pour tester la fenêtre
+        # Code pour tester la fenêtre"""
         if __name__ == "__main__":
             app = QApplication(sys.argv)
             
@@ -135,33 +149,13 @@ class LoginPage(QWidget):
 class SignInPage(QWidget):
     def __init__(self, switch_to_login):
         super().__init__()
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(100, 100, 100, 100)
 
-        main_layout = QHBoxLayout()
-
-        # === Image + effet flou ===
-        image_container = QFrame()
-        stack_layout = QStackedLayout(image_container)
-
-        image_label = QLabel()
-        pixmap = QPixmap("Valencia.jpg")
-        image_label.setPixmap(pixmap)
-        image_label.setScaledContents(True)
-        image_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
-        blur_effect = QGraphicsBlurEffect()
-        blur_effect.setBlurRadius(2)
-        image_label.setGraphicsEffect(blur_effect)
-
-        stack_layout.addWidget(image_label)
-        main_layout.addWidget(image_container, 3)
-
-        # === Formulaire Sign-up ===
         form_layout = QVBoxLayout()
-        form_layout.setSpacing(20)
-        form_layout.setContentsMargins(40, 40, 40, 40)
-        form_layout.addSpacerItem(QSpacerItem(20, 40))
 
-        title = QLabel("Create your Seavia account")
+
+        title = QLabel("Sign up for Seavia")
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet("""
             QLabel {
@@ -197,10 +191,18 @@ class SignInPage(QWidget):
             """)
             return line
 
-        username = create_input("Choose a username")
-        email = create_input("enter your email")
-        password = create_input("Choose a password", password=True)
-        confirm = create_input("Confirm password", password=True)
+        username = QLineEdit()
+        username.setPlaceholderText("Choose a username")
+
+        email = QLineEdit()  # 🔧 LIGNE AJOUTÉE
+        email.setPlaceholderText("Enter your email")  # 🔧 LIGNE AJOUTÉE
+
+        password = QLineEdit()
+        password.setPlaceholderText("Choose a password")
+        password.setEchoMode(QLineEdit.Password)
+        confirm = QLineEdit()
+        confirm.setPlaceholderText("Confirm password")
+        confirm.setEchoMode(QLineEdit.Password)
 
 
         form_layout.addWidget(username)

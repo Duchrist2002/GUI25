@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit, QPushButton,
                              QVBoxLayout, QHBoxLayout, QSizePolicy, QSpacerItem,
-                             QGraphicsBlurEffect, QScrollArea, QStackedLayout, QStackedWidget, QFrame)
+                             QGraphicsBlurEffect, QScrollArea, QStackedLayout, QStackedWidget, QFrame,QMessageBox)
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 import sys
@@ -68,16 +68,16 @@ class LoginPage(QWidget):
             """)
             return line
 
-        name = create_input("Enter your name")
-        password = create_input("Enter your password")
-        password.setEchoMode(QLineEdit.Password)
+        self.name = create_input("Enter your name")
+        self.password = create_input("Enter your password")
+        self.password.setEchoMode(QLineEdit.Password)
 
-        content_layout.addWidget(name)
-        content_layout.addWidget(password)
+        content_layout.addWidget(self.name)
+        content_layout.addWidget(self.password)
 
-        login_button = QPushButton("Login")
-        login_button.setMinimumHeight(40)
-        login_button.setStyleSheet("""
+        self.login_button = QPushButton("Login")
+        self.login_button.setMinimumHeight(40)
+        self.login_button.setStyleSheet("""
             QPushButton {
                 background-color: #e74c3c;
                 color: white;
@@ -91,7 +91,7 @@ class LoginPage(QWidget):
                 background-color: #c0392b;
             }
         """)
-        content_layout.addWidget(login_button)
+        content_layout.addWidget(self.login_button)
 
         signup_link = QPushButton("Create an account")
         signup_link.setStyleSheet("QPushButton { color: #007ACC; background: transparent; border: none; }")
@@ -237,7 +237,6 @@ class SignInPage(QWidget):
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        init_db()
         self.setWindowTitle("Seavia Holiday")
         self.setMinimumSize(800, 600)
 

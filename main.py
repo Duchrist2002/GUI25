@@ -149,11 +149,30 @@ class LoginPage(QWidget):
 class SignInPage(QWidget):
     def __init__(self, switch_to_login):
         super().__init__()
-        main_layout = QVBoxLayout()
-        main_layout.setContentsMargins(100, 100, 100, 100)
+
+        main_layout = QHBoxLayout()
+
+        # === Image + effet flou ===
+        image_container = QFrame()
+        stack_layout = QStackedLayout(image_container)
+
+        image_label = QLabel()
+        pixmap = QPixmap("Valencia.jpg")
+        image_label.setPixmap(pixmap)
+        image_label.setScaledContents(True)
+        image_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        blur_effect = QGraphicsBlurEffect()
+        blur_effect.setBlurRadius(2)
+        image_label.setGraphicsEffect(blur_effect)
+
+        stack_layout.addWidget(image_label)
+        main_layout.addWidget(image_container, 3)
 
         form_layout = QVBoxLayout()
-
+        form_layout.setSpacing(20)
+        form_layout.setContentsMargins(40, 40, 40, 40)
+        form_layout.addSpacerItem(QSpacerItem(20, 40))
 
         title = QLabel("Sign up for Seavia")
         title.setAlignment(Qt.AlignCenter)

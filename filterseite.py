@@ -7,9 +7,8 @@ from PyQt5.QtWidgets import (
     QAbstractItemView, QScrollArea, QGridLayout, QFrame
 )
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QPixmap, QFont
 
-ASSETS_PATH = "assets/stadtbilder"  # À adapter selon ton projet
+ASSETS_PATH = "assets/stadtbilder"  #chemin d acces pour les photos
 
 class CityGallery(QWidget):
     def __init__(self, city_list):
@@ -26,7 +25,6 @@ class CityGallery(QWidget):
                 img_path = "assets/placeholder.jpg"  # Une image de secours
 
             btn = QPushButton()
-            from PyQt5.QtGui import QIcon
             btn.setIcon(QIcon(QPixmap(img_path)))
             btn.setIconSize(QSize(110, 80))
             btn.setFixedSize(120, 100)
@@ -67,7 +65,69 @@ class CityGallery(QWidget):
             self.selected.add(city)
         else:
             self.selected.discard(city)
-        print("Villes sélectionnées:", self.selected)  # À connecter à ta logique de filtre
+        print("Villes sélectionnées:", self.selected)  # partie a connecter au filtre
+
+# -- SHIP GALLERY --
+
+class ShipGallery(QWidget):
+    def __init__(self, shiptypes):
+        super().__init__()
+        self.selected = set()
+        grid_widget = QWidget()
+        grid = QGridLayout(grid_widget)
+        grid.setSpacing(12)
+        row, col = 0, 0
+
+        ASSETS_SHIP = "assets/schiffbilder"
+        for idx, schiff in enumerate(shiptypes):
+            img_path = os.path.join(ASSETS_SHIP, f"{schiff}.jpg")
+            if not os.path.exists(img_path):
+                img_path = "assets/placeholder.jpg"
+
+            btn = QPushButton()
+            btn.setIcon(QIcon(QPixmap(img_path)))
+            btn.setIconSize(QSize(110, 80))
+            btn.setFixedSize(120, 100)
+            btn.setCheckable(True)
+            btn.setToolTip(schiff)
+            btn.setStyleSheet("""
+                QPushButton { border: 2px solid transparent; border-radius: 12px; }
+                QPushButton:checked { border: 2px solid #0078D7; background: #e6f2ff; }
+            """)
+            btn.clicked.connect(lambda checked, s=schiff: self.on_ship_click(s, checked))
+
+            lbl = QLabel(schiff)
+            lbl.setAlignment(Qt.AlignCenter)
+            lbl.setFont(QFont("Arial", 9))
+            ship_widget = QFrame()
+            ship_layout = QVBoxLayout(ship_widget)
+            ship_layout.addWidget(btn)
+            ship_layout.addWidget(lbl)
+            ship_layout.setContentsMargins(0, 0, 0, 0)
+            ship_layout.setSpacing(2)
+
+            grid.addWidget(ship_widget, row, col)
+            col += 1
+            if col >= 5:
+                col = 0
+                row += 1
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(grid_widget)
+        scroll.setFixedHeight(160)
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(scroll)
+
+    def on_ship_click(self, schiff, checked):
+        if checked:
+            self.selected.add(schiff)
+        else:
+            self.selected.discard(schiff)
+        print("Schiffstypen sélectionnés:", self.selected)  # À relier à la logique de filtre
+
+# -- FIN SHIP GALLERY --
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -77,7 +137,7 @@ class MainWindow(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.user_label = QLabel("👤 Benutzer: Max Mustermann | Kapital: 1850 €")
+        self.user_label = QLabel("👤 Benutzer: Max Mustermann | Dummy_Kapital: 1850 €")
         self.user_label.setStyleSheet("font-size:16px; font-weight:bold; padding:8px;")
 
         # --- FILTERS ZONE ---
@@ -98,17 +158,26 @@ class MainWindow(QWidget):
         filter_layout.addWidget(QLabel("Nächte:"))
         filter_layout.addWidget(self.naechte_sb)
 
-        # Schiffstyp
-        self.schiff_cb = QComboBox()
-        self.schiff_cb.addItems(["(Alle)", "A", "B", "C", "D", "E", "F", "G", "H", "I", "X"])
-        filter_layout.addWidget(QLabel("Schiffstyp:"))
-        filter_layout.addWidget(self.schiff_cb)
 
         filter_box.setLayout(filter_layout)
 
         # --- CITY GALLERY ZONE ---
-        city_list = ["Stockholm", "Helsinki", "Kopenhagen", "Tallinn", "Riga", "Hamburg", "Oslo", "Amsterdam"]
+        city_list = [
+            "Aberdeen", "Alexandria", "Algier", "Amsterdam", "Antwerpen", "Athen", "Barcelona", "Bari",
+            "Belfast", "Bergen", "Cagliari", "Catania", "Danzig", "Den Haag", "Dublin", "Edinburgh",
+            "Galway", "Genua", "Gibraltar", "Göteborg", "Hamburg", "Hammerfest", "Haugesund", "Helsinki",
+            "Heraklion", "Izmir", "Kaliningrad", "Kleipada", "Kopenhagen", "Kristiansand", "London",
+            "Longyearbyen", "Malaga", "Marseille", "Neapel", "Nizza", "Nuuk", "Oulu", "Palermo",
+            "Palma de Mallorca", "Reykjavik", "Rhodos", "Riga", "Rostock", "Sankt_Petersburg", "Split",
+            "Stavanger", "Stockholm", "Stralsund", "Swinemünde", "Tallin", "Tanger", "Thule", "Torshavn",
+            "Tromsö", "Trondheim", "Tunis", "Valencia", "Valetta", "Venedig", "Visby", "Ystad"
+        ]
+
         self.city_gallery = CityGallery(city_list)
+
+        # --- SHIP GALLERY ZONE ---
+        shiptypes = ["Schiffstyp A", "Schiffstyp B", "Schiffstyp C", "Schiffstyp D", "Schiffstyp E", "Schiffstyp F", "Schiffstyp G", "Schiffstyp H", "Schiffstyp I", "Schiffstyp X"]
+        self.ship_gallery = ShipGallery(shiptypes)
 
         # --- RESULTS ZONE ---
         self.results_table = QTableWidget(6, 5)
@@ -124,6 +193,8 @@ class MainWindow(QWidget):
         main_layout.addWidget(filter_box)
         main_layout.addWidget(QLabel("Wähle besuchte Städte:"))
         main_layout.addWidget(self.city_gallery)
+        main_layout.addWidget(QLabel("Wähle Schiffstyp:"))
+        main_layout.addWidget(self.ship_gallery)
         main_layout.addWidget(QLabel("🚢 Verfügbare Reisen:"))
         main_layout.addWidget(self.results_table)
         self.setLayout(main_layout)

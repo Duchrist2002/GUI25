@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cba287f4-19e1-4e49-b390-48f5c2a64c46" name="Changes" comment="My new commit from 08.05.2025 is there">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/filter_logic.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/result.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/filterseite.py" beforeDir="false" afterPath="$PROJECT_DIR$/filterseite.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,12 +41,18 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Python.filter_logic.executor": "Run",
     "Python.filterseite.executor": "Run",
     "Python.main.executor": "Run",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/User/Desktop/Aufgabe 2 Reiseportal/Aufgabe 2 Reiseportal/Hafenstädte/Valetta.jpg"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\User\PycharmProjects\GUI_Project25\assets" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

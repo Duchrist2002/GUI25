@@ -8,12 +8,16 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QSize
 
+from backend.filters import get_filtered_cruises
+
 ASSETS_PATH = "assets/stadtbilder"  #chemin d acces pour les photos
 
 class CityGallery(QWidget):
-    def __init__(self, city_list):
+    def __init__(self, city_list, callback):
         super().__init__()
         self.selected = set()
+        self.callback = callback
+
         grid_widget = QWidget()
         grid = QGridLayout(grid_widget)
         grid.setSpacing(12)
@@ -65,14 +69,14 @@ class CityGallery(QWidget):
             self.selected.add(city)
         else:
             self.selected.discard(city)
-        print("Villes sélectionnées:", self.selected)  # partie a connecter au filtre
-
-# -- SHIP GALLERY --
+        self.callback()
 
 class ShipGallery(QWidget):
-    def __init__(self, shiptypes):
+    def __init__(self, shiptypes, callback):
         super().__init__()
         self.selected = set()
+        self.callback = callback
+
         grid_widget = QWidget()
         grid = QGridLayout(grid_widget)
         grid.setSpacing(12)
@@ -125,69 +129,63 @@ class ShipGallery(QWidget):
             self.selected.add(schiff)
         else:
             self.selected.discard(schiff)
-        print("Schiffstypen sélectionnés:", self.selected)  # À relier à la logique de filtre
-
-# -- FIN SHIP GALLERY --
+        self.callback()
 
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self, preset_meerart=None):
         super().__init__()
         self.setWindowTitle("Schiffsreisen Auswahl – Mockup")
         self.setMinimumSize(950, 650)
-        self.init_ui()
+        self.init_ui(preset_meerart)
 
-    def init_ui(self):
+    def init_ui(self, preset_meerart):
         self.user_label = QLabel("👤 Benutzer: Max Mustermann | Dummy_Kapital: 1850 €")
         self.user_label.setStyleSheet("font-size:16px; font-weight:bold; padding:8px;")
 
-        # --- FILTERS ZONE ---
         filter_box = QGroupBox("🔎 Filter")
         filter_layout = QHBoxLayout()
 
-        # Meerart
         self.meerart_cb = QComboBox()
         self.meerart_cb.addItems(["(Alle)", "Ostsee", "Nordsee", "Mittelmeer", "Nordpolarmeer", "Nordpolarmeer (Spezial)"])
-        filter_layout.addWidget(QLabel("Meerart:"))
-        filter_layout.addWidget(self.meerart_cb)
+        if preset_meerart:
+            index = self.meerart_cb.findText(preset_meerart, Qt.MatchFixedString)
+            if index >= 0:
+                self.meerart_cb.setCurrentIndex(index)
 
-        # Anzahl Nächte
+        self.meerart_cb.currentTextChanged.connect(self.update_table)
+
         self.naechte_sb = QSpinBox()
         self.naechte_sb.setMinimum(1)
         self.naechte_sb.setMaximum(30)
         self.naechte_sb.setValue(7)
+        self.naechte_sb.valueChanged.connect(self.update_table)
+
+        filter_layout.addWidget(QLabel("Meerart:"))
+        filter_layout.addWidget(self.meerart_cb)
         filter_layout.addWidget(QLabel("Nächte:"))
         filter_layout.addWidget(self.naechte_sb)
-
-
         filter_box.setLayout(filter_layout)
 
-        # --- CITY GALLERY ZONE ---
-        city_list = [
-            "Aberdeen", "Alexandria", "Algier", "Amsterdam", "Antwerpen", "Athen", "Barcelona", "Bari",
+        city_list = ["Aberdeen", "Alexandria", "Algier", "Amsterdam", "Antwerpen", "Athen", "Barcelona", "Bari",
             "Belfast", "Bergen", "Cagliari", "Catania", "Danzig", "Den Haag", "Dublin", "Edinburgh",
             "Galway", "Genua", "Gibraltar", "Göteborg", "Hamburg", "Hammerfest", "Haugesund", "Helsinki",
             "Heraklion", "Izmir", "Kaliningrad", "Kleipada", "Kopenhagen", "Kristiansand", "London",
             "Longyearbyen", "Malaga", "Marseille", "Neapel", "Nizza", "Nuuk", "Oulu", "Palermo",
             "Palma de Mallorca", "Reykjavik", "Rhodos", "Riga", "Rostock", "Sankt_Petersburg", "Split",
             "Stavanger", "Stockholm", "Stralsund", "Swinemünde", "Tallin", "Tanger", "Thule", "Torshavn",
-            "Tromsö", "Trondheim", "Tunis", "Valencia", "Valetta", "Venedig", "Visby", "Ystad"
-        ]
+            "Tromsö", "Trondheim", "Tunis", "Valencia", "Valetta", "Venedig", "Visby", "Ystad"]
 
-        self.city_gallery = CityGallery(city_list)
+        self.city_gallery = CityGallery(city_list, self.update_table)
 
-        # --- SHIP GALLERY ZONE ---
         shiptypes = ["Schiffstyp A", "Schiffstyp B", "Schiffstyp C", "Schiffstyp D", "Schiffstyp E", "Schiffstyp F", "Schiffstyp G", "Schiffstyp H", "Schiffstyp I", "Schiffstyp X"]
-        self.ship_gallery = ShipGallery(shiptypes)
+        self.ship_gallery = ShipGallery(shiptypes, self.update_table)
 
-        # --- RESULTS ZONE ---
-        self.results_table = QTableWidget(6, 5)
+        self.results_table = QTableWidget(0, 5)
         self.results_table.setHorizontalHeaderLabels(["Nr.", "Meerart", "Nächte", "Städte", "Schiffstyp"])
         self.results_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.results_table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.results_table.setMinimumHeight(300)
-        self.fill_results_mock()
 
-        # --- LAYOUT ROOT ---
         main_layout = QVBoxLayout()
         main_layout.addWidget(self.user_label)
         main_layout.addWidget(filter_box)
@@ -199,19 +197,23 @@ class MainWindow(QWidget):
         main_layout.addWidget(self.results_table)
         self.setLayout(main_layout)
 
-    def fill_results_mock(self):
-        reisen = [
-            ["001", "Ostsee", "7", "Stockholm, Helsinki", "A"],
-            ["002", "Mittelmeer", "10", "Rom, Barcelona", "C"],
-            ["003", "Nordsee", "5", "Hamburg, Amsterdam", "E"],
-            ["004", "Nordpolarmeer", "14", "Spitzbergen", "X"],
-            ["005", "Ostsee", "12", "Tallinn, Riga", "B"],
-            ["006", "Mittelmeer", "8", "Athen, Malta", "D"],
-        ]
+        self.update_table()
+
+    def update_table(self):
+        filters = {
+            "meerart": self.meerart_cb.currentText() if self.meerart_cb.currentText() != "(Alle)" else None,
+            "naechte": self.naechte_sb.value(),
+            "staedte": list(self.city_gallery.selected),
+            "schiffstyp": list(self.ship_gallery.selected)[0] if self.ship_gallery.selected else None
+        }
+        reisen = get_filtered_cruises(filters)
+        self.results_table.setRowCount(len(reisen))
         for row, r in enumerate(reisen):
-            for col, v in enumerate(r):
-                item = QTableWidgetItem(v)
-                self.results_table.setItem(row, col, item)
+            self.results_table.setItem(row, 0, QTableWidgetItem(str(r["Reisenummer"])))
+            self.results_table.setItem(row, 1, QTableWidgetItem(str(r["Meerart"])))
+            self.results_table.setItem(row, 2, QTableWidgetItem(str(r["Übernachtungen"])))
+            self.results_table.setItem(row, 3, QTableWidgetItem(", ".join(r["besuchte Städte"])))
+            self.results_table.setItem(row, 4, QTableWidgetItem(str(r["Schiffstyp"])))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

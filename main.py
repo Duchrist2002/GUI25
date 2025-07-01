@@ -1,22 +1,27 @@
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit, QPushButton,
                              QVBoxLayout, QHBoxLayout, QSizePolicy, QSpacerItem,
-                             QGraphicsBlurEffect, QScrollArea, QStackedLayout, QStackedWidget, QFrame,QMessageBox)
+                             QGraphicsBlurEffect, QScrollArea, QStackedLayout, QStackedWidget, QFrame, QMessageBox)
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 import sys
 
+import sqlite3
+from backend.data_manager import check_login, add_user, init_db
+from standard import Header
+
+
 class LoginPage(QWidget):
-    def __init__(self, switch_to_signup):
+    def __init__(self, switch_to_signup, switch_to_home):
         super().__init__()
+        self.switch_to_home = switch_to_home
 
         main_layout = QHBoxLayout()
 
-        # === Image + texte superposé ===
         image_container = QFrame()
         stack_layout = QStackedLayout(image_container)
 
         image_label = QLabel()
-        pixmap = QPixmap("assets/stadtbilder/Valetta.jpg")
+        pixmap = QPixmap("assets/Valetta.jpg")
         image_label.setPixmap(pixmap)
         image_label.setScaledContents(True)
         image_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -28,7 +33,6 @@ class LoginPage(QWidget):
         stack_layout.addWidget(image_label)
         main_layout.addWidget(image_container, 3)
 
-        # === Formulaire Login ===
         content_layout = QVBoxLayout()
         content_layout.setSpacing(20)
         content_layout.setContentsMargins(40, 40, 40, 40)
@@ -69,10 +73,12 @@ class LoginPage(QWidget):
             return line
 
         self.name = create_input("Enter your name")
+        self.email = create_input("Enter your email")
         self.password = create_input("Enter your password")
         self.password.setEchoMode(QLineEdit.Password)
 
         content_layout.addWidget(self.name)
+        content_layout.addWidget(self.email)
         content_layout.addWidget(self.password)
 
         self.login_button = QPushButton("Login")
@@ -106,30 +112,18 @@ class LoginPage(QWidget):
         main_layout.addWidget(form)
         self.setLayout(main_layout)
 
-         # Connexion du bouton login à la méthode handle_login
         self.login_button.clicked.connect(self.handle_login)
 
-    def handle_login(self):  # <-- Valuers_User + comparaison + conclusion
+    def handle_login(self):
         username = self.name.text()
+        email = self.email.text()
         password = self.password.text()
 
-        if username == "admin" and password == "1234":
-            QMessageBox.information(self, "Succès", "Connexion réussie !")  # <-- MODIF: utilisation QMessageBox
-            # TODO: switch vers la page d'accueil ou autre
+        if check_login(username, email, password):
+            QMessageBox.information(self, "Succès", "Connexion réussie !")
+            self.switch_to_home()
         else:
-            QMessageBox.warning(self, "Erreur", "Nom d'utilisateur ou mot de passe incorrect.")  # <-- MODIF: QMessageBox erreur
-
-        # Code pour tester la fenêtre
-        if __name__ == "__main__":
-            app = QApplication(sys.argv)
-            
-            def dummy_switch_to_signup():
-                print("Switch to signup called")
-
-            login = LoginPage(dummy_switch_to_signup)
-            login.show()
-            sys.exit(app.exec_())
-
+            QMessageBox.warning(self, "Erreur", "Identifiants incorrects.")
 
 
 class SignInPage(QWidget):
@@ -138,12 +132,11 @@ class SignInPage(QWidget):
 
         main_layout = QHBoxLayout()
 
-        # === Image + effet flou ===
         image_container = QFrame()
         stack_layout = QStackedLayout(image_container)
 
         image_label = QLabel()
-        pixmap = QPixmap("assets/stadtbilder/Valencia.jpg")
+        pixmap = QPixmap("assets/Valencia.jpg")
         image_label.setPixmap(pixmap)
         image_label.setScaledContents(True)
         image_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -155,7 +148,6 @@ class SignInPage(QWidget):
         stack_layout.addWidget(image_label)
         main_layout.addWidget(image_container, 3)
 
-        # === Formulaire Sign-up ===
         form_layout = QVBoxLayout()
         form_layout.setSpacing(20)
         form_layout.setContentsMargins(40, 40, 40, 40)
@@ -197,16 +189,15 @@ class SignInPage(QWidget):
             """)
             return line
 
-        username = create_input("Choose a username")
-        email = create_input("enter your email")
-        password = create_input("Choose a password", password=True)
-        confirm = create_input("Confirm password", password=True)
+        self.username = create_input("Choose a username")
+        self.email = create_input("enter your email")
+        self.password = create_input("Choose a password", password=True)
+        self.confirm = create_input("Confirm password", password=True)
 
-
-        form_layout.addWidget(username)
-        form_layout.addWidget(email)
-        form_layout.addWidget(password)
-        form_layout.addWidget(confirm)
+        form_layout.addWidget(self.username)
+        form_layout.addWidget(self.email)
+        form_layout.addWidget(self.password)
+        form_layout.addWidget(self.confirm)
 
         create_button = QPushButton("Create Account")
         create_button.setMinimumHeight(40)
@@ -224,6 +215,7 @@ class SignInPage(QWidget):
                 background-color: #c0392b;
             }
         """)
+        create_button.clicked.connect(self.register_user)
         form_layout.addWidget(create_button)
 
         back_btn = QPushButton("Back to Login")
@@ -239,16 +231,21 @@ class SignInPage(QWidget):
         main_layout.addWidget(form_widget)
         self.setLayout(main_layout)
 
+    def register_user(self):
+        name = self.username.text()
+        email = self.email.text()
+        pwd = self.password.text()
+        confirm = self.confirm.text()
 
+        if pwd != confirm:
+            QMessageBox.warning(self, "Erreur", "Les mots de passe ne correspondent pas.")
+            return
 
-class MainPage(QWidget):
-    def __init__(self):
-        super().__init__()
+        if add_user(name, email, pwd):
+            QMessageBox.information(self, "Succès", "Compte créé avec succès.")
+        else:
+            QMessageBox.warning(self, "Erreur", "Nom ou email déjà utilisé.")
 
-
-        MainLayout = QHBoxLayout
-
-        ContentContainer = QScrollarea
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -257,12 +254,13 @@ class MainWindow(QWidget):
         self.setMinimumSize(800, 600)
 
         self.stack = QStackedWidget()
-
-        self.login_page = LoginPage(self.show_signup)
+        self.login_page = LoginPage(self.show_signup, self.show_home)
         self.signup_page = SignInPage(self.show_login)
+        self.home_page = Header()
 
         self.stack.addWidget(self.login_page)
         self.stack.addWidget(self.signup_page)
+        self.stack.addWidget(self.home_page)
 
         main_layout = QVBoxLayout()
         main_layout.addWidget(self.stack)
@@ -274,7 +272,12 @@ class MainWindow(QWidget):
     def show_login(self):
         self.stack.setCurrentWidget(self.login_page)
 
+    def show_home(self):
+        self.stack.setCurrentWidget(self.home_page)
+
+
 if __name__ == "__main__":
+    init_db()
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

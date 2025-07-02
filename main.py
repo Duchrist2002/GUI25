@@ -21,7 +21,7 @@ class LoginPage(QWidget):
         stack_layout = QStackedLayout(image_container)
 
         image_label = QLabel()
-        pixmap = QPixmap("assets/Valetta.jpg")
+        pixmap = QPixmap("assets/stadtbilder/Valetta.jpg")
         image_label.setPixmap(pixmap)
         image_label.setScaledContents(True)
         image_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -136,7 +136,7 @@ class SignInPage(QWidget):
         stack_layout = QStackedLayout(image_container)
 
         image_label = QLabel()
-        pixmap = QPixmap("assets/Valencia.jpg")
+        pixmap = QPixmap("assets/stadtbilder/Valencia.jpg")
         image_label.setPixmap(pixmap)
         image_label.setScaledContents(True)
         image_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)

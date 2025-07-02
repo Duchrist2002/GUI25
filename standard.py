@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt, QSize, QTimer, pyqtSignal
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QColor
 import vlc
 
-from filterseite import MainWindow as FilterWindow  # import interface des filtres
+from filterseite import MainStackedApp as FilterWindow
 
 class Header(QWidget):
     def __init__(self):
@@ -26,7 +26,7 @@ class Header(QWidget):
 
         self.instance = vlc.Instance("--no-video-title-show", "--video-on-top", "--no-xlib", "--no-osd")
         self.player = self.instance.media_player_new()
-        media = self.instance.media_new("small.mp4")
+        media = self.instance.media_new("assets/small.mp4")
         self.player.set_media(media)
 
         if sys.platform.startswith("linux"):
@@ -40,7 +40,7 @@ class Header(QWidget):
         self.player.set_fullscreen(False)
 
         logo_label = QLabel()
-        pixmap = QPixmap("logo.png").scaled(100, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        pixmap = QPixmap("assets/logo.png").scaled(100, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         logo_label.setPixmap(pixmap)
         logo_label.setAlignment(Qt.AlignLeft)
 
@@ -104,7 +104,7 @@ class Header(QWidget):
 
     def open_filterseite(self, meerart):
         self.filterseite = FilterWindow()
-        self.filterseite.meerart_cb.setCurrentText(meerart)
+        self.filterseite.select_meerart_and_open(meerart)
         self.filterseite.show()
         self.close()
 
@@ -119,10 +119,10 @@ class Home(QWidget):
         image_container.setLayout(image_layout)
 
         destinations = [
-            ("Nordsee.jpeg", "Nordsee"),
-            ("Nordpolarmeer.jpeg", "Nordpolarmeer"),
-            ("Mittelmeer.jpeg", "Mittelmeer"),
-            ("Ostsee.jpeg", "Ostsee"),
+            ("assets/see/Nordsee.jpg", "Nordsee"),
+            ("assets/see/Nordpolarmeer.jpg", "Nordpolarmeer"),
+            ("assets/see/Mittelmeer.jpg", "Mittelmeer"),
+            ("assets/see/Ostsee.jpg", "Ostsee"),
         ]
 
         for image, name in destinations:

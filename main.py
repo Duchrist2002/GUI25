@@ -248,13 +248,13 @@ class SignInPage(QWidget):
         confirm = self.confirm.text()
 
         if pwd != confirm:
-            QMessageBox.warning(self, "Erreur", "Les mots de passe ne correspondent pas.")
+            QMessageBox.warning(self, "Erreur", "Passwörter stimmen nicht überein.")
             return
 
         if add_user(name, email, pwd):
-            QMessageBox.information(self, "Succès", "Compte créé avec succès.")
+            QMessageBox.information(self, "Succes", "Konto wurde kreiert.")
         else:
-            QMessageBox.warning(self, "Erreur", "Nom ou email déjà utilisé.")
+            QMessageBox.warning(self, "Erreur", "Name oder email bereit benutzt.")
 
 
 class MainWindow(QWidget):

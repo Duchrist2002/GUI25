@@ -14,9 +14,6 @@ from backend.filters import get_filtered_cruises
 ASSETS_PATH = "assets/stadtbilder"
 
 
-# ========================================
-# Galerie des villes avec style
-# ========================================
 class CityGallery(QWidget):
     def __init__(self, city_list, callback):
         super().__init__()
@@ -89,9 +86,6 @@ class CityGallery(QWidget):
         self.callback()
 
 
-# ========================================
-# Galerie des navires avec style
-# ========================================
 class ShipGallery(QWidget):
     def __init__(self, shiptypes, callback):
         super().__init__()
@@ -292,7 +286,7 @@ class FilterPage(QWidget):
 
     def go_to_summary(self):
         if not self.selected_cruise:
-            QMessageBox.warning(self, "Fehler", "Bitte wähle d'abord une Reise!")
+            QMessageBox.warning(self, "Fehler", "Bitte wähle zuerst eine Reise!")
             return
         self.switch_to_summary(self.selected_cruise)
 
@@ -326,7 +320,7 @@ class SummaryPage(QWidget):
         self.switch_to_filter = switch_to_filter
         self.switch_to_payment = switch_to_payment
 
-        title = QLabel(f"Résumé du voyage n°{cruise['Reisenummer']}")
+        title = QLabel(f"Zusammenfassung der Reise n°{cruise['Reisenummer']}")
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet("""
             QLabel {
@@ -400,13 +394,13 @@ class SummaryPage(QWidget):
         """)
         info_layout = QVBoxLayout()
         info_layout.addWidget(QLabel(f"🌊 <b>Mer :</b> {cruise['Meerart']}"))
-        info_layout.addWidget(QLabel(f"🛏️ <b>Nombre de nuits :</b> {cruise['Übernachtungen']}"))
-        info_layout.addWidget(QLabel(f"🏙️ <b>Villes visitées :</b> {cruise['besuchte Städte']}"))
-        info_layout.addWidget(QLabel(f"🚢 <b>Type de navire :</b> {cruise['Schiffstyp']}"))
+        info_layout.addWidget(QLabel(f"🛏️ <b>Anzahl Nächte :</b> {cruise['Übernachtungen']}"))
+        info_layout.addWidget(QLabel(f"🏙️ <b>besuchte Städte :</b> {cruise['besuchte Städte']}"))
+        info_layout.addWidget(QLabel(f"🚢 <b>Schifftyp :</b> {cruise['Schiffstyp']}"))
         info_group.setLayout(info_layout)
 
-        back_btn = QPushButton("← Retour aux filtres")
-        next_btn = QPushButton("Continuer vers paiement →")
+        back_btn = QPushButton("← zurück zum Filter")
+        next_btn = QPushButton("weiter zur Zahlung →")
         for btn in [back_btn, next_btn]:
             btn.setStyleSheet("""
                 QPushButton {
@@ -441,7 +435,7 @@ class PaymentPage(QWidget):
         super().__init__()
         self.switch_to_summary = switch_to_summary
 
-        title = QLabel("💳 Paiement du voyage")
+        title = QLabel("💳 Zahung der Reise")
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet("""
             QLabel {
@@ -454,7 +448,7 @@ class PaymentPage(QWidget):
             }
         """)
 
-        form_group = QGroupBox("Informations bancaires")
+        form_group = QGroupBox("Bankdaten")
         form_group.setStyleSheet("""
             QGroupBox {
                 border: 2px solid #007ACC;
@@ -465,11 +459,11 @@ class PaymentPage(QWidget):
         """)
         form_layout = QVBoxLayout()
         self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("Nom du titulaire")
+        self.name_input.setPlaceholderText("Name des Eigentumers")
         self.card_input = QLineEdit()
-        self.card_input.setPlaceholderText("Numéro de carte (XXXX XXXX XXXX XXXX)")
+        self.card_input.setPlaceholderText("Kartennummer (XXXX XXXX XXXX XXXX)")
         self.exp_input = QLineEdit()
-        self.exp_input.setPlaceholderText("Date d'expiration (MM/AA)")
+        self.exp_input.setPlaceholderText("Ablaufdatum (MM/AA)")
         self.cvv_input = QLineEdit()
         self.cvv_input.setPlaceholderText("CVV")
         self.cvv_input.setEchoMode(QLineEdit.Password)
@@ -490,8 +484,8 @@ class PaymentPage(QWidget):
             form_layout.addWidget(widget)
         form_group.setLayout(form_layout)
 
-        back_btn = QPushButton("← Retour au résumé")
-        pay_btn = QPushButton("Payer maintenant ✅")
+        back_btn = QPushButton("← Zurück zum Fazit")
+        pay_btn = QPushButton("Jetzt Zahlen✅")
         for btn in [back_btn, pay_btn]:
             btn.setStyleSheet("""
                 QPushButton {
@@ -522,9 +516,9 @@ class PaymentPage(QWidget):
 
     def validate_payment(self):
         if not all([self.name_input.text(), self.card_input.text(), self.exp_input.text(), self.cvv_input.text()]):
-            QMessageBox.warning(self, "Erreur", "Merci de remplir tous les champs.")
+            QMessageBox.warning(self, "Error", "Füllen Sie alle Felder aus.")
             return
-        QMessageBox.information(self, "Paiement", "✅ Votre paiement a été effectué ! Merci pour votre confiance.")
+        QMessageBox.information(self, "Paiement", "✅ Ihre Zahlung ist erfolgreich ! Danke fürs Vertrauen.")
 
 class MainStackedApp(QWidget):
     def __init__(self):
@@ -560,7 +554,6 @@ class MainStackedApp(QWidget):
         self.stack.setCurrentWidget(self.summary_page)
 
     def select_meerart_and_open(self, meerart):
-        """Sélectionne la mer et ouvre la page filtre."""
         self.filter_page.meerart_cb.setCurrentText(meerart)
         self.stack.setCurrentWidget(self.filter_page)
 

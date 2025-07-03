@@ -74,7 +74,7 @@ class Header(QWidget):
             capital = get_user_capital(username)
             self.user_info = QLabel(f"👤 {username} | Kapital: {capital} €")
         else:
-            self.user_info = QLabel("👤 Aucun utilisateur connecté | Kapital: 0 €")
+            self.user_info = QLabel("👤 kein nutzer verbunden | Kapital: 0 €")
         self.user_info.setStyleSheet("""
             QLabel {
                 background-color: #ffffff;

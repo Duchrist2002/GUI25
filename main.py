@@ -1,3 +1,8 @@
+"Aufgabe 2 gruppe 10 mit PyQt5 von Tresor Demanou und Audrey Keigoum"
+
+
+
+
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit, QPushButton,
                              QVBoxLayout, QHBoxLayout, QSizePolicy, QSpacerItem,
                              QGraphicsBlurEffect, QScrollArea, QStackedLayout, QStackedWidget, QFrame, QMessageBox)
@@ -8,6 +13,7 @@ import sys
 import sqlite3
 from backend.data_manager import check_login, add_user, init_db
 from standard import Header
+from backend.user_capital_manager import set_current_user, augment_user_capital
 
 
 class LoginPage(QWidget):
@@ -122,6 +128,10 @@ class LoginPage(QWidget):
         if check_login(username, email, password):
             QMessageBox.information(self, "Succès", "Connexion réussie !")
             self.switch_to_home()
+            set_current_user(username)
+            new_capital = augment_user_capital(username)
+            print(f"Utilisateur {username} connecté, capital mis à jour: {new_capital} €")
+
         else:
             QMessageBox.warning(self, "Erreur", "Identifiants incorrects.")
 

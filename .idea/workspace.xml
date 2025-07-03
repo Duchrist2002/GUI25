@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cba287f4-19e1-4e49-b390-48f5c2a64c46" name="Changes" comment="My new commit from 08.05.2025 is there">
+      <change afterPath="$PROJECT_DIR$/backend/user_capital_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/loader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/filterseite.py" beforeDir="false" afterPath="$PROJECT_DIR$/filterseite.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/standard.py" beforeDir="false" afterPath="$PROJECT_DIR$/standard.py" afterDir="false" />
@@ -39,22 +41,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python.filter_logic.executor": "Run",
-    "Python.filterseite.executor": "Run",
-    "Python.loader.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.standard.executor": "Run",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/User/Desktop/Aufgabe 2 Reiseportal/Aufgabe 2 Reiseportal/Hafenstädte/Valetta.jpg"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python.filter_logic.executor&quot;: &quot;Run&quot;,
+    &quot;Python.filterseite.executor&quot;: &quot;Run&quot;,
+    &quot;Python.loader.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.standard.executor&quot;: &quot;Run&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/Desktop/Aufgabe 2 Reiseportal/Aufgabe 2 Reiseportal/Hafenstädte/Valetta.jpg&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\User\PycharmProjects\GUI_Project25\backend" />
       <recent name="C:\Users\User\PycharmProjects\GUI_Project25\assets" />
+      <recent name="C:\Users\User\PycharmProjects\GUI_Project25\backend" />
     </key>
   </component>
   <component name="SharedIndexes">

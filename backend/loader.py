@@ -2,9 +2,7 @@ import os
 import pandas as pd
 
 def load_reisen(filepath=None):
-    """
-    Charge les données de croisières depuis un fichier Excel.
-    """
+
     if filepath is None:
         filepath = os.path.join(os.path.dirname(__file__), "..", "schiffreisen.xlsx")
 

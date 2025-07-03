@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 import os
 from PyQt5.QtGui import QPixmap, QFont, QIcon
@@ -12,14 +13,16 @@ from backend.filters import get_filtered_cruises
 
 ASSETS_PATH = "assets/stadtbilder"
 
+
 # ========================================
-# Classe pour la galerie des villes
+# Galerie des villes avec style
 # ========================================
 class CityGallery(QWidget):
     def __init__(self, city_list, callback):
         super().__init__()
         self.selected = set()
         self.callback = callback
+
         grid_widget = QWidget()
         grid = QGridLayout(grid_widget)
         grid.setSpacing(12)
@@ -36,18 +39,28 @@ class CityGallery(QWidget):
             btn.setCheckable(True)
             btn.setToolTip(city)
             btn.setStyleSheet("""
-                QPushButton { border: 2px solid transparent; border-radius: 12px; }
-                QPushButton:checked { border: 2px solid #0078D7; background: #e6f2ff; }
+                QPushButton {
+                    border: 2px solid #007ACC; 
+                    border-radius: 12px;
+                    background: white;
+                }
+                QPushButton:checked {
+                    background: #e6f2ff;
+                    border: 2px solid #e74c3c;
+                }
             """)
             btn.clicked.connect(lambda checked, c=city: self.on_city_click(c, checked))
+
             lbl = QLabel(city)
             lbl.setAlignment(Qt.AlignCenter)
             lbl.setFont(QFont("Arial", 9))
+
             city_widget = QFrame()
             city_layout = QVBoxLayout(city_widget)
             city_layout.addWidget(btn)
             city_layout.addWidget(lbl)
             grid.addWidget(city_widget, row, col)
+
             col += 1
             if col >= 4:
                 col = 0
@@ -57,6 +70,14 @@ class CityGallery(QWidget):
         scroll.setWidgetResizable(True)
         scroll.setWidget(grid_widget)
         scroll.setFixedHeight(230)
+        scroll.setStyleSheet("""
+            QScrollArea {
+                border: 2px solid #007ACC;
+                border-radius: 12px;
+                background: #ffffff;
+            }
+        """)
+
         layout = QVBoxLayout(self)
         layout.addWidget(scroll)
 
@@ -67,14 +88,16 @@ class CityGallery(QWidget):
             self.selected.discard(city)
         self.callback()
 
+
 # ========================================
-# Classe pour la galerie des navires
+# Galerie des navires avec style
 # ========================================
 class ShipGallery(QWidget):
     def __init__(self, shiptypes, callback):
         super().__init__()
         self.selected = set()
         self.callback = callback
+
         grid_widget = QWidget()
         grid = QGridLayout(grid_widget)
         grid.setSpacing(12)
@@ -92,18 +115,28 @@ class ShipGallery(QWidget):
             btn.setCheckable(True)
             btn.setToolTip(schiff)
             btn.setStyleSheet("""
-                QPushButton { border: 2px solid transparent; border-radius: 12px; }
-                QPushButton:checked { border: 2px solid #0078D7; background: #e6f2ff; }
+                QPushButton {
+                    border: 2px solid #007ACC;
+                    border-radius: 12px;
+                    background: white;
+                }
+                QPushButton:checked {
+                    background: #e6f2ff;
+                    border: 2px solid #e74c3c;
+                }
             """)
             btn.clicked.connect(lambda checked, s=schiff: self.on_ship_click(s, checked))
+
             lbl = QLabel(schiff)
             lbl.setAlignment(Qt.AlignCenter)
             lbl.setFont(QFont("Arial", 9))
+
             ship_widget = QFrame()
             ship_layout = QVBoxLayout(ship_widget)
             ship_layout.addWidget(btn)
             ship_layout.addWidget(lbl)
             grid.addWidget(ship_widget, row, col)
+
             col += 1
             if col >= 5:
                 col = 0
@@ -113,6 +146,14 @@ class ShipGallery(QWidget):
         scroll.setWidgetResizable(True)
         scroll.setWidget(grid_widget)
         scroll.setFixedHeight(160)
+        scroll.setStyleSheet("""
+            QScrollArea {
+                border: 2px solid #007ACC;
+                border-radius: 12px;
+                background: #ffffff;
+            }
+        """)
+
         layout = QVBoxLayout(self)
         layout.addWidget(scroll)
 
@@ -123,28 +164,47 @@ class ShipGallery(QWidget):
             self.selected.discard(schiff)
         self.callback()
 
-# ========================================
-# Page des filtres et du tableau
-# ========================================
+
 class FilterPage(QWidget):
     def __init__(self, switch_to_summary):
         super().__init__()
         self.switch_to_summary = switch_to_summary
         self.selected_cruise = None
-        self.user_label = QLabel("👤 Benutzer: Max Mustermann | Dummy_Kapital: 1850 €")
-        self.user_label.setStyleSheet("font-size:16px; font-weight:bold; padding:8px;")
+
+        self.user_label = QLabel("👤 Benutzer: Max Mustermann | Kapital: 1850 €")
+        self.user_label.setStyleSheet("""
+            QLabel {
+                font-size:16px; 
+                font-weight:bold; 
+                padding:8px;
+                background: #007ACC; 
+                color: white;
+                border-radius: 8px;
+            }
+        """)
 
         # Filtres haut
-        filter_box = QGroupBox("🔎 Filter")
+        filter_box = QGroupBox(" 🔍 Filter")
+        filter_box.setStyleSheet("""
+            QGroupBox {
+                border: 2px solid #007ACC;
+                border-radius: 12px;
+                padding: 8px;
+                font-weight: bold;
+                background: #ffffff;
+            }
+        """)
         filter_layout = QHBoxLayout()
         self.meerart_cb = QComboBox()
-        self.meerart_cb.addItems(["(Alle)", "Ostsee", "Nordsee", "Mittelmeer", "Nordpolarmeer", "Nordpolarmeer (Spezial)"])
+        self.meerart_cb.addItems(
+            ["(Alle)", "Ostsee", "Nordsee", "Mittelmeer", "Nordpolarmeer", "Nordpolarmeer (Spezial)"])
         self.meerart_cb.currentTextChanged.connect(self.update_table)
         self.naechte_sb = QSpinBox()
         self.naechte_sb.setMinimum(1)
         self.naechte_sb.setMaximum(30)
         self.naechte_sb.setValue(7)
         self.naechte_sb.valueChanged.connect(self.update_table)
+
         filter_layout.addWidget(QLabel("Meerart:"))
         filter_layout.addWidget(self.meerart_cb)
         filter_layout.addWidget(QLabel("Nächte:"))
@@ -171,17 +231,41 @@ class FilterPage(QWidget):
         self.results_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.results_table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.results_table.setMinimumHeight(300)
+        self.results_table.setStyleSheet("""
+            QTableWidget {
+                border: 2px solid #007ACC;
+                border-radius: 12px;
+                background: #ffffff;
+            }
+        """)
         self.results_table.itemSelectionChanged.connect(self.store_selected_cruise)
 
         # Navigation
         self.next_btn = QPushButton("Weiter ➔")
+        self.next_btn.setStyleSheet("""
+            QPushButton {
+                background: #e74c3c;
+                color: white;
+                font-weight: bold;
+                font-size: 16px;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 10px;
+            }
+            QPushButton:hover {
+                background: #c0392b;
+            }
+        """)
         self.next_btn.clicked.connect(self.go_to_summary)
+
         self.prev_btn = QPushButton("← Précédent")
+        self.prev_btn.setStyleSheet(self.next_btn.styleSheet())
+        self.prev_btn.clicked.connect(self.back_to_home)
+
         nav_layout = QHBoxLayout()
         nav_layout.addWidget(self.prev_btn)
         nav_layout.addWidget(self.next_btn)
 
-        # Layout général
         layout = QVBoxLayout()
         layout.addWidget(self.user_label)
         layout.addWidget(filter_box)
@@ -228,6 +312,13 @@ class FilterPage(QWidget):
             self.results_table.setItem(row, 3, QTableWidgetItem(", ".join(r["besuchte Städte"])))
             self.results_table.setItem(row, 4, QTableWidgetItem(str(r["Schiffstyp"])))
 
+    def back_to_home(self):
+        self.close()
+        from standard import Header
+        self.new_home = Header()
+        self.new_home.show()
+
+
 class SummaryPage(QWidget):
     def __init__(self, cruise, switch_to_filter, switch_to_payment):
         super().__init__()
@@ -235,17 +326,23 @@ class SummaryPage(QWidget):
         self.switch_to_filter = switch_to_filter
         self.switch_to_payment = switch_to_payment
 
-        # Titre en haut
         title = QLabel(f"Résumé du voyage n°{cruise['Reisenummer']}")
         title.setAlignment(Qt.AlignCenter)
-        title.setStyleSheet("font-size:22px; font-weight:bold; padding:10px;")
+        title.setStyleSheet("""
+            QLabel {
+                font-size: 24px;
+                font-weight: bold;
+                color: #007ACC;
+                background: #f0f8ff;
+                border-radius: 12px;
+                padding: 12px;
+            }
+        """)
 
-        # Galerie scrollable
         scroll_widget = QWidget()
         grid = QGridLayout(scroll_widget)
         grid.setSpacing(12)
 
-        # Photos des villes
         villes = [v.strip() for v in cruise["besuchte Städte"].split(",")]
         for idx, ville in enumerate(villes):
             img_path = os.path.join("assets/stadtbilder", f"{ville}.jpg")
@@ -262,9 +359,15 @@ class SummaryPage(QWidget):
             vbox.addWidget(lbl_caption)
             frame = QFrame()
             frame.setLayout(vbox)
-            grid.addWidget(frame, idx//4, idx%4)
+            frame.setStyleSheet("""
+                QFrame {
+                    border: 2px solid #007ACC;
+                    border-radius: 10px;
+                    background: white;
+                }
+            """)
+            grid.addWidget(frame, idx // 4, idx % 4)
 
-        # Photo du navire
         ship_img_path = os.path.join("assets/schiffbilder", f"{cruise['Schiffstyp']}.jpg")
         if not os.path.exists(ship_img_path):
             ship_img_path = "assets/placeholder.jpg"
@@ -272,15 +375,29 @@ class SummaryPage(QWidget):
         ship_pixmap = QPixmap(ship_img_path).scaled(300, 180, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         ship_img_label.setPixmap(ship_pixmap)
         ship_img_label.setAlignment(Qt.AlignCenter)
-        grid.addWidget(ship_img_label, (len(villes)+4)//4, 0, 1, 4)
+        grid.addWidget(ship_img_label, (len(villes) + 4) // 4, 0, 1, 4)
 
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(scroll_widget)
         scroll_area.setFixedHeight(300)
+        scroll_area.setStyleSheet("""
+            QScrollArea {
+                border: 2px solid #007ACC;
+                border-radius: 12px;
+                background: #ffffff;
+            }
+        """)
 
-        # Infos générales
         info_group = QGroupBox("Détails du voyage")
+        info_group.setStyleSheet("""
+            QGroupBox {
+                border: 2px solid #007ACC;
+                border-radius: 12px;
+                background: #ffffff;
+                padding: 10px;
+            }
+        """)
         info_layout = QVBoxLayout()
         info_layout.addWidget(QLabel(f"🌊 <b>Mer :</b> {cruise['Meerart']}"))
         info_layout.addWidget(QLabel(f"🛏️ <b>Nombre de nuits :</b> {cruise['Übernachtungen']}"))
@@ -288,16 +405,30 @@ class SummaryPage(QWidget):
         info_layout.addWidget(QLabel(f"🚢 <b>Type de navire :</b> {cruise['Schiffstyp']}"))
         info_group.setLayout(info_layout)
 
-        # Navigation bas
-        nav_layout = QHBoxLayout()
         back_btn = QPushButton("← Retour aux filtres")
-        back_btn.clicked.connect(self.switch_to_filter)
         next_btn = QPushButton("Continuer vers paiement →")
+        for btn in [back_btn, next_btn]:
+            btn.setStyleSheet("""
+                QPushButton {
+                    background: #e74c3c;
+                    color: white;
+                    font-weight: bold;
+                    font-size: 16px;
+                    padding: 8px 16px;
+                    border: none;
+                    border-radius: 10px;
+                }
+                QPushButton:hover {
+                    background: #c0392b;
+                }
+            """)
+        back_btn.clicked.connect(self.switch_to_filter)
         next_btn.clicked.connect(self.switch_to_payment)
+
+        nav_layout = QHBoxLayout()
         nav_layout.addWidget(back_btn)
         nav_layout.addWidget(next_btn)
 
-        # Layout global
         layout = QVBoxLayout()
         layout.addWidget(title)
         layout.addWidget(scroll_area)
@@ -305,19 +436,33 @@ class SummaryPage(QWidget):
         layout.addLayout(nav_layout)
         self.setLayout(layout)
 
-
 class PaymentPage(QWidget):
     def __init__(self, switch_to_summary):
         super().__init__()
         self.switch_to_summary = switch_to_summary
 
-        # Titre
         title = QLabel("💳 Paiement du voyage")
         title.setAlignment(Qt.AlignCenter)
-        title.setStyleSheet("font-size:22px; font-weight:bold; padding:10px;")
+        title.setStyleSheet("""
+            QLabel {
+                font-size: 24px;
+                font-weight: bold;
+                color: #007ACC;
+                background: #f0f8ff;
+                border-radius: 12px;
+                padding: 12px;
+            }
+        """)
 
-        # Formulaire
         form_group = QGroupBox("Informations bancaires")
+        form_group.setStyleSheet("""
+            QGroupBox {
+                border: 2px solid #007ACC;
+                border-radius: 12px;
+                background: #ffffff;
+                padding: 10px;
+            }
+        """)
         form_layout = QVBoxLayout()
         self.name_input = QLineEdit()
         self.name_input.setPlaceholderText("Nom du titulaire")
@@ -330,19 +475,45 @@ class PaymentPage(QWidget):
         self.cvv_input.setEchoMode(QLineEdit.Password)
         for widget in [self.name_input, self.card_input, self.exp_input, self.cvv_input]:
             widget.setMinimumHeight(30)
+            widget.setStyleSheet("""
+                QLineEdit {
+                    border: 2px solid #007ACC;
+                    border-radius: 8px;
+                    padding: 6px;
+                    background: #f9f9f9;
+                }
+                QLineEdit:focus {
+                    border-color: #e74c3c;
+                    background: #ffffff;
+                }
+            """)
             form_layout.addWidget(widget)
         form_group.setLayout(form_layout)
 
-        # Navigation bas
-        nav_layout = QHBoxLayout()
         back_btn = QPushButton("← Retour au résumé")
-        back_btn.clicked.connect(self.switch_to_summary)
         pay_btn = QPushButton("Payer maintenant ✅")
+        for btn in [back_btn, pay_btn]:
+            btn.setStyleSheet("""
+                QPushButton {
+                    background: #e74c3c;
+                    color: white;
+                    font-weight: bold;
+                    font-size: 16px;
+                    padding: 8px 16px;
+                    border: none;
+                    border-radius: 10px;
+                }
+                QPushButton:hover {
+                    background: #c0392b;
+                }
+            """)
+        back_btn.clicked.connect(self.switch_to_summary)
         pay_btn.clicked.connect(self.validate_payment)
+
+        nav_layout = QHBoxLayout()
         nav_layout.addWidget(back_btn)
         nav_layout.addWidget(pay_btn)
 
-        # Layout global
         layout = QVBoxLayout()
         layout.addWidget(title)
         layout.addWidget(form_group)
@@ -354,7 +525,6 @@ class PaymentPage(QWidget):
             QMessageBox.warning(self, "Erreur", "Merci de remplir tous les champs.")
             return
         QMessageBox.information(self, "Paiement", "✅ Votre paiement a été effectué ! Merci pour votre confiance.")
-
 
 class MainStackedApp(QWidget):
     def __init__(self):
@@ -395,9 +565,6 @@ class MainStackedApp(QWidget):
         self.stack.setCurrentWidget(self.filter_page)
 
 
-# ========================================
-# Lancement de l'application
-# ========================================
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainStackedApp()
